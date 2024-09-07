@@ -135,7 +135,7 @@ impl OpenOptions {
         Ok(file)
     }
 
-    #[cfg(target_os = "openbsd")]
+    #[cfg(any(target_os = "openbsd", target_os = "freebsd"))]
     fn open(&mut self, number: u32) -> Result<File> {
         use std::os::unix::fs::OpenOptionsExt;
 
@@ -152,6 +152,25 @@ impl OpenOptions {
             let path = std::path::Path::new("/dev").join(&filename);
             options.open(path)?
         };
+
+        #[cfg(target_os = "freebsd")]
+        if self.mode == Mode::Tun {
+            // Set `TUNSIFHEAD`
+
+            use libc::{
+                ioctl, c_int, c_ulong
+            };
+            use std::{
+                io::Error,
+                os::fd::AsRawFd,
+            };
+            const TUNSIFHEAD: c_ulong = 0x80047460;
+
+            let err = unsafe { ioctl(file.as_raw_fd(), TUNSIFHEAD, &(1 as c_int)) };
+            if err != 0 {
+                return Err(Error::last_os_error());
+            }
+        }
 
         Ok(file)
     }

@@ -14,18 +14,18 @@ case $OS in
         sudo ip tuntap add dev tap11 mode tap user $USER
         sudo ip link set tap11 up
         ;;
-    "OpenBSD")
+    "OpenBSD" | "FreeBSD")
         set -x
         doas ifconfig tun10 create
         doas ifconfig tun10 inet 10.10.10.1 10.10.10.2 netmask 255.255.255.255
         doas ifconfig tun11 create
         doas ifconfig tap11 create
         cd /dev
-        doas sh MAKEDEV tun10
+        [ "$OS" == "OpenBSD" ] && doas sh MAKEDEV tun10
         doas chown $USER:$USER tun10
-        doas sh MAKEDEV tun11
+        [ "$OS" == "OpenBSD" ] && doas sh MAKEDEV tun11
         doas chown $USER:$USER tun11
-        doas sh MAKEDEV tap11
+        [ "$OS" == "OpenBSD" ] && doas sh MAKEDEV tap11
         doas chown $USER:$USER tap11
         cd -
         ;;

@@ -137,7 +137,7 @@ fn tun_receives_packets_with_packet_info() {
     assert_eq!(data, &buffer[..number]);
 }
 
-#[cfg(target_os = "openbsd")]
+#[cfg(any(target_os = "openbsd", target_os = "freebsd"))]
 #[test]
 #[serial]
 fn tun_sents_packets() {
@@ -171,7 +171,7 @@ fn tun_sents_packets() {
     }
 }
 
-#[cfg(target_os = "openbsd")]
+#[cfg(any(target_os = "openbsd", target_os = "freebsd"))]
 #[test]
 #[serial]
 fn tun_receives_packets() {

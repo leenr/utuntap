@@ -9,7 +9,7 @@ case $OS in
         sudo ip tuntap del tun11 mode tun
         sudo ip tuntap del tap11 mode tap
         ;;
-    "OpenBSD")
+    "OpenBSD" | "FreeBSD")
         doas ifconfig tun10 destroy
         doas rm /dev/tun10
         doas ifconfig tun11 destroy
